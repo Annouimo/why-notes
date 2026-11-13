@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { notes, isPreview } from '../../lib/notes';
+export function getStaticPaths() { return notes.map(note => ({ params: { slug: note.slug }, props: { note } })); }
+const { note } = Astro.props;
+const { Content, frontmatter } = note;
+const headings = note.getHeadings().filter(h => h.depth === 2);
+---
+<Base title={frontmatter.title} description={frontmatter.description} preview={isPreview}>
+  <article class="lesson">
+    <header class="lesson-header reading-width">
+      <a class="back-link" href="/">← 所有讲义</a>
+      <p class="eyebrow">{frontmatter.topic} / 可探索的解释</p>
+      <h1>{frontmatter.title}</h1>
+      <p class="lesson-description">{frontmatter.description}</p>
+      <div class="lesson-meta"><span>{frontmatter.date.replaceAll('-', '.')}</span>{frontmatter.draft && <span>制作中 · 前两幕预览</span>}</div>
+    </header>
+    <nav class="lesson-toc reading-width" aria-label="本篇目录"><span>本篇路线</span>{headings.map(h => <a href={`#${h.slug}`}>{h.text}</a>)}</nav>
+    <div class="prose"><Content /></div>
+    <div class="reading-width lesson-end"><span>WHY NOTES / 01</span><a href="#main">回到开头 ↑</a></div>
+  </article>
+</Base>

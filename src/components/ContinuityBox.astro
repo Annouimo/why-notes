@@ -1,0 +1,24 @@
+---
+import { scenes } from '../lib/continuity';
+import type { FunctionKind } from '../lib/continuity';
+interface Props { kind: FunctionKind }
+const { kind } = Astro.props;
+const scene = scenes[kind];
+---
+<continuity-box data-kind={kind} class="box-explorer">
+  <div class="explorer-heading"><div><span class="figure-label">动手探索 / {kind === 'sine' ? '01' : '02'}</span><h3>{scene.formula}</h3></div><span class="scope-label">定义域 ℝ</span></div>
+  <div class="plot-legend"><span class="legend-curve">函数曲线</span><span class="legend-sides">左右边界</span><span class="legend-limits">上下限制</span></div>
+  <div class="plot-host"><svg class="main-plot" role="img" aria-label={`${scene.formula} 的小框实验，中心点可横向拖动。`}><title>{scene.title}</title></svg></div>
+  <div class="view-caption"><span>局部视野 · 中心随曲线移动</span><span data-view-scale></span></div>
+  <div class="explorer-controls">
+    <div class="position-control"><label>中心 x₀<input data-center type="number" step="0.1" value={scene.center} inputmode="decimal" aria-label="框中心的横坐标" /></label><div class="button-pair"><button type="button" data-move="-1" aria-label="向左移动中心">← 左移</button><button type="button" data-move="1" aria-label="向右移动中心">右移 →</button></div></div>
+    <div class="size-control"><div class="box-dimensions"><span>半高 ε = <strong>{scene.epsilon}</strong><span class="fixed-label">固定</span></span><span>半宽 δ = <strong data-delta>{scene.delta}</strong></span></div>{kind === 'square' && <div class="button-pair"><button type="button" data-width="0.5">收窄一半</button><button type="button" data-width="2">加宽一倍</button></div>}</div>
+  </div>
+  <div class="explorer-status" data-safe="true"><span class="status-symbol" aria-hidden="true">✓</span><div><p data-status role="status">当前框内的曲线未触及上下限制。</p><span data-detail></span></div></div>
+  <div class="explorer-bottom"><span data-hint>横向拖动中心点，或使用左右按钮。</span><button type="button" data-reset>重置实验 ↺</button></div>
+  {kind === 'square' && <details class="overview"><summary>看看现在走到了哪里</summary><svg class="overview-plot" role="img" aria-label="抛物线的全局位置示意"></svg></details>}
+  <noscript><p>这个实验需要 JavaScript。正弦函数可统一取 δ = 0.4、ε = 0.5；对于平方函数，任何固定正半宽在足够远处都会失效。</p></noscript>
+</continuity-box>
+<script>
+  import '../lib/continuity-element';
+</script>

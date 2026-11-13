@@ -186,12 +186,12 @@ npm run dev
 
 ### 部署状态
 
-目标是独立 Cloudflare Worker 与 `learn.annouimo.com`，仓库为唯一源码。初始制作预览已部署到独立 Worker `why-notes-preview`：
+目标是独立 Cloudflare Worker 与 `learn.annouimo.com`，仓库为唯一源码。初始制作预览使用 **`why-notes` 本身的原生 Version URL**，只上传版本，不创建正式部署：
 
-- [站点预览](https://why-notes-preview.keen18906416.workers.dev/)
-- [一致连续：前两幕](https://why-notes-preview.keen18906416.workers.dev/notes/uniform-continuity/)
+- [站点预览](https://uniform-continuity-why-notes.keen18906416.workers.dev/)
+- [一致连续：前两幕](https://uniform-continuity-why-notes.keen18906416.workers.dev/notes/uniform-continuity/)
 
-正式域名绑定与 Git 自动发布连接在正式发布前完成。当前预览通过 `npm run pack:preview` 生成自包含 Worker，由已授权的 Cloudflare 连接上传；它包含 WOFF2 字体，页面及响应均禁止索引。正式站点使用 Workers Static Assets 托管完整 `dist/`。
+正式域名绑定与 Git 自动发布连接在正式发布前完成。当前预览通过 `npm run pack:preview` 生成自包含的版本包，由已授权的 Cloudflare 连接上传到 `why-notes` 的 `/versions` 接口，附带 `workers/alias=uniform-continuity`。它包含 WOFF2 字体，页面及响应均禁止索引。预览功能已开启，正式 workers.dev 入口保持关闭，尚无正式部署。正式站点使用 Workers Static Assets 托管完整 `dist/`。
 
 当前已包含 GitHub Actions 检查；这不等于已经配置 Cloudflare 自动部署。后续连接应保证：制作分支构建包含草稿的预览，main 构建正式站点。每次新增讲义无需重新配置域名。
 
@@ -201,3 +201,5 @@ npm run dev
 - [Communicating with Interactive Articles](https://distill.pub/2020/communicating-with-interactive-articles/)：交互式文章的设计讨论。
 - [Idyll](https://idyll-lang.org/docs)：面向交互式文章的标记语言与组件设计。
 - [Astro](https://docs.astro.build/) 与 [MDX](https://mdxjs.com/docs/what-is-mdx/)：候选的网页构建工具与内容格式。
+
+原生版本预览与正式发布共用一个 Worker。预览更新通过上传版本更新别名；正式发布另行创建指向已审阅正式构建版本的 deployment。不要为每篇讲义或每个预览另建 Worker。

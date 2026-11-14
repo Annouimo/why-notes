@@ -14,7 +14,7 @@
     "check": "astro check && node --test tests/*.test.ts",
     "new:note": "node scripts/new-note.mjs",
     "generate-types": "cf workers types",
-    "deploy": "cf deploy",
+    "deploy": "cf build && node scripts/check-drafts.mjs && cf deploy --prebuilt --mode production",
     "deploy:preview": "WHY_NOTES_PREVIEW=1 cf previews deploy"
   },
   "dependencies": {

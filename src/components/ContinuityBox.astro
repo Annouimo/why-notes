@@ -3,19 +3,31 @@ import { examples } from '../lib/examples';
 import type { Kind } from '../lib/examples';
 interface Props { kind: Kind }
 const { kind } = Astro.props;
-const s=examples[kind];
+const s = examples[kind];
+const tasks: Record<Kind,string> = {
+ sine:'保持框的大小不变，左右移动，看看曲线会不会碰到红线。',
+ square:'先把框向右移；碰到红线后，试着收窄，再往右寻找反例。',
+ root:'把框移到原点附近：曲线很陡，还能留在红线之间吗？',
+ inverse:'把框向左移，靠近零，观察固定宽度的框会发生什么。',
+ oscillation:'向零靠近：振荡越来越密时，固定宽度的框还能合适吗？',
+ damped:'向零靠近，同时观察振荡的高度，而不只是疏密。',
+ chirp:'把框向右移，观察高度相近的振荡怎样变得密集。',
+};
 ---
 <continuity-box data-kind={kind} class="box-explorer">
-<div class="explorer-heading"><h3>{s.formula}</h3><span class="scope-label">定义域 {s.domain}</span></div>
-<div class="plot-legend"><span class="legend-curve">函数曲线</span><span class="legend-sides">左右边界</span><span class="legend-limits">上下限制</span></div>
-<div class="plot-host"><svg class="main-plot" role="img" aria-label={`${s.formula}，固定坐标系上的移动小框`}></svg></div>
-<div class="view-caption"><span>固定坐标系 · 拖动中心，小框沿曲线移动</span><span data-view-scale></span></div>
-<div class="explorer-controls">
-<div class="position-control"><label>中心 x₀<input data-center type="number" step="any" value={s.center} aria-label="框中心的横坐标" /></label><div class="button-pair"><button data-move="-1">← 左移</button><button data-move="1">右移 →</button></div></div>
-<div class="size-control"><div class="box-dimensions"><span>半高 ε = {s.eps}（固定）</span><span>半宽 δ = <strong data-delta>{s.delta}</strong></span></div>{kind!=='sine'&&<div class="button-pair"><button data-width=".5">收窄一半</button><button data-width="2">加宽一倍</button></div>}</div>
+<div data-inline-home></div>
+<div class="explorer-panel">
+  <div class="explorer-heading"><h3 id={`figure-${kind}`}>{s.formula}</h3><span class="scope-label">{s.domain}</span><button data-expand aria-haspopup="dialog">展开探索 ↗</button><button data-close hidden>返回正文 ×</button></div>
+  <p class="explorer-task">{tasks[kind]}</p>
+  <div class="plot-host"><svg class="main-plot" role="img" aria-label={`${s.formula}，拖动中心或用左右按钮移动小框`}></svg></div>
+  <div class="explorer-status"><span data-status-icon aria-hidden="true"></span><p data-status role="status" aria-live="polite"></p></div>
+  <div class="primary-controls">
+    <div class="move-group" aria-label="移动小框"><button data-move="-1" aria-label="小框左移">← 左移</button><span data-view-scale></span><button data-move="1" aria-label="小框右移">右移 →</button></div>
+    {kind!=='sine'&&<div class="width-group" aria-label="改变小框宽度"><button data-width=".5">收窄</button><span>δ = <strong data-delta>{s.delta}</strong></span><button data-width="2">加宽</button></div>}
+    {kind==='sine'&&<span class="fixed-delta">δ = <strong data-delta>{s.delta}</strong></span>}
+  </div>
+  <div class="explorer-footer"><span>ε = {s.eps} · 拖动中心移动小框</span><button data-reset>重置</button><details class="explorer-options"><summary>视野与数值</summary><div><label>中心 x₀ <input data-center type="number" step="any" value={s.center} /></label><button data-camera="fit">查看中心附近</button><button data-camera="right">视野向右</button><p data-detail></p><p class="plot-legend"><span class="legend-curve">曲线</span><span class="legend-sides">绿边：宽度</span><span class="legend-limits">红边：高度限制</span></p></div></details></div>
 </div>
-<div class="button-pair"><button data-camera="fit">查看中心附近</button><button data-camera="right">查看更右侧</button><button data-reset>重置</button></div>
-<div class="explorer-status"><p data-status role="status"></p></div>
-<p class="text-small" data-detail></p>
+<dialog class="explorer-dialog" aria-labelledby={`figure-${kind}`}></dialog>
 </continuity-box>
 <script>import '../lib/continuity-element';</script>

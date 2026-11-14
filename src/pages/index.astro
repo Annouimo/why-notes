@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { notes, isPreview } from '../lib/notes';
+---
+<Base preview={isPreview}>
+  <section class="home-intro reading-width">
+    <p class="eyebrow">自由学习 / WHY NOTES</p>
+    <h1>把问题想明白，<br />把解释留下来。</h1>
+    <p class="home-description">一些可以动手探索的数学与物理讲义。<br />从一个具体的疑问出发，让图像、直觉和公式慢慢接上。</p>
+  </section>
+  <section class="note-list reading-width" aria-labelledby="notes-title">
+    <div class="section-line"><h2 id="notes-title">讲义</h2><span>{notes.length} 篇{isPreview ? ' · 制作预览' : ''}</span></div>
+    {notes.map(note => <a class="note-entry" href={`/notes/${note.slug}/`}>
+      <div class="note-entry-top"><span>{note.frontmatter.topic}</span><span>{note.frontmatter.draft ? '制作中' : note.frontmatter.date.replaceAll('-', '.')}</span></div>
+      <h3>{note.frontmatter.title}<span aria-hidden="true"> ↗</span></h3>
+      <p>{note.frontmatter.description}</p>
+      <span class="entry-action">开始探索 <span aria-hidden="true">→</span></span>
+    </a>)}
+    {notes.length === 0 && <p class="empty-state">第一篇讲义正在制作中。</p>}
+  </section>
+</Base>

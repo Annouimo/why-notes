@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import { notes, isPreview } from '../../lib/notes';
+export function getStaticPaths() { return notes.map(note => ({ params: { slug: note.slug }, props: { note } })); }
+const { note } = Astro.props;
+const { Content, frontmatter } = note;
+const headings = note.getHeadings().filter(h => h.depth === 2);
+---
+<Base title={frontmatter.title} description={frontmatter.description} preview={isPreview}>
+  <article class="lesson">
+    <header class="lesson-header reading-width">
+      <a class="back-link" href="/">← 所有讲义</a>
+      <p class="eyebrow">{frontmatter.topic} / 可探索的解释</p>
+      <h1>{frontmatter.title}</h1>
+      <p class="lesson-description">{frontmatter.description}</p>
+      <div class="lesson-meta"><span>{frontmatter.date.replaceAll('-', '.')}</span>{frontmatter.draft && <span>制作中 · 完整讲义预览</span>}</div>
+    </header>
+    <nav class="lesson-toc" aria-label="本篇目录"><details><summary>目录 <span data-current-section></span></summary><div class="toc-links">{headings.map(h => <a href={`#${h.slug}`}>{h.text}</a>)}</div></details></nav>
+    <div class="prose"><Content /></div>
+    <div class="reading-width lesson-end"><span>WHY NOTES / 01</span><a href="#main">回到开头 ↑</a></div>
+  </article>
+</Base>
+
+<script>
+ const nav=document.querySelector('.lesson-toc')!;
+ const wide=window.matchMedia('(min-width:1320px)');
+ const details=nav.querySelector('details')!;const sync=()=>{details.open=wide.matches;};sync();wide.addEventListener('change',sync);
+ const links=Array.from(nav.querySelectorAll<HTMLAnchorElement>('a'));
+ const headings=links.map(a=>document.getElementById(decodeURIComponent(a.hash.slice(1)))!).filter(Boolean);
+ const update=()=>{const current=headings.filter(h=>h.getBoundingClientRect().top<window.innerHeight*.35).at(-1)??headings[0];for(const a of links){if(a.hash==='#'+current?.id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');}const label=nav.querySelector('[data-current-section]')!;label.textContent=current?.textContent??'';};
+ const observer=new IntersectionObserver(update,{rootMargin:'-10% 0px -60% 0px',threshold:0});headings.forEach(h=>observer.observe(h));update();
+ links.forEach(a=>a.addEventListener('click',()=>{if(!wide.matches)details.open=false;}));
+</script>

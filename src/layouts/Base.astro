@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+interface Props { title?: string; description?: string; preview?: boolean }
+const { title = 'why-notes', description = '通过可探索的数学与物理讲义来学习。', preview = false } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    {preview && <meta name="robots" content="noindex, nofollow" />}
+    {!preview && <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />}
+    <meta name="theme-color" content="#f7f7f5" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title === 'why-notes' ? title : `${title} · why-notes`}</title>
+    <script is:inline>
+      try { const theme = localStorage.getItem('why-notes-theme'); if (theme) document.documentElement.dataset.theme = theme; } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳至正文</a>
+    <header class="site-header">
+      <a href="/" class="brand">why-notes<span class="brand-dot" aria-hidden="true">.</span></a>
+      <nav aria-label="主导航">
+        <a href="/">讲义</a>
+        <a href="https://www.annouimo.com/">博客</a>
+        <a href="https://gallery.annouimo.com/">陈列室</a>
+        <button class="theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题"><span aria-hidden="true">◐</span></button>
+      </nav>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer"><a href="/">why-notes</a><span>把问题想明白，把解释留下来。</span><a href="https://github.com/Annouimo/why-notes">源代码 ↗</a></footer>
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      button?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = dark ? 'light' : 'dark';
+        try { localStorage.setItem('why-notes-theme', root.dataset.theme); } catch {}
+      });
+    </script>
+  </body>
+</html>

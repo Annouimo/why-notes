@@ -27,4 +27,4 @@
 
 ## 发布
 
-仓库是唯一源码。目标：Cloudflare Worker why-notes，正式域名 learn.annouimo.com；分支预览和正式发布分离，但共用同一个 Worker。预览使用原生 Version URL，上传版本不等于正式部署；禁止为每篇讲义或预览额外创建 Worker。正式合并触发自动部署的连接需要在 Cloudflare 中实际完成并验证，不得把计划写成已配置。不得提交凭据、构建产物或 node_modules。
+仓库是唯一源码。目标：Cloudflare Worker why-notes，正式域名 learn.annouimo.com；分支预览和正式发布分离，但共用同一个 Worker。预览使用同一个 Worker 下的原生 Workers Previews，分支预览不等于正式部署；禁止为每篇讲义或预览额外创建 Worker。正式合并触发自动部署的连接需要在 Cloudflare 中实际完成并验证，不得把计划写成已配置。不得提交凭据、构建产物或 node_modules。

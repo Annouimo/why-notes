@@ -161,7 +161,8 @@ npm run dev
 | `npm run check` | Astro / TypeScript 检查与数学行为测试 |
 | `npm run build:preview` | 构建包含草稿的预览，页面带 noindex |
 | `npm run build` | 正式构建，排除草稿及其 URL |
-| `npm run pack:preview` | 构建并打包供 Cloudflare 连接上传的测试 Worker |
+| `npm run deploy` | 通过 cf 构建并部署生产站，排除草稿 |
+| `npm run deploy:preview` | 通过 cf 构建并部署当前分支的原生 Workers Preview，包含草稿 |
 | `npm run preview` | 在本地查看 dist 构建产物 |
 | `npm run new:note -- topic-slug "标题"` | 新建正文与制作说明，不覆盖已有主题 |
 
@@ -184,16 +185,17 @@ npm run dev
 
 你负责解释目标、关键体验与最终数学审阅；助手负责整理说明、实现、适配和预先验证。正文只维护一份，制作说明保存设计意图，不重复抄录正文。
 
-### 部署状态
+### 发布与预览
 
-目标是独立 Cloudflare Worker 与 `learn.annouimo.com`，仓库为唯一源码。初始制作预览使用 **`why-notes` 本身的原生 Version URL**，只上传版本，不创建正式部署：
+同一个 Cloudflare Worker `why-notes` 托管生产站与原生 Workers Previews，使用 Workers Static Assets 分发构建产物和字体。配置位于 `cloudflare.config.ts`，CLI 与依赖版本由 package-lock.json 锁定。
 
-- [站点预览](https://uniform-continuity-why-notes.keen18906416.workers.dev/)
-- [一致连续：前两幕](https://uniform-continuity-why-notes.keen18906416.workers.dev/notes/uniform-continuity/)
+- 生产：`https://learn.annouimo.com/`，排除所有 `draft: true` 的主题。
+- 分支预览：`https://<preview-slug>.learn.annouimo.com/`，包含草稿。
+- 当前制作分支：`feat/uniform-continuity-preview`，对应 `https://feat-uniform-continuity-preview.learn.annouimo.com/notes/uniform-continuity/`。
 
-正式域名绑定与 Git 自动发布连接在正式发布前完成。当前预览通过 `npm run pack:preview` 生成自包含的版本包，由已授权的 Cloudflare 连接上传到 `why-notes` 的 `/versions` 接口，附带 `workers/alias=uniform-continuity`。它包含 WOFF2 字体，页面及响应均禁止索引。预览功能已开启，正式 workers.dev 入口保持关闭，尚无正式部署。正式站点使用 Workers Static Assets 托管完整 `dist/`。
+Cloudflare Workers Builds 连接此仓库：main 的提交运行 `npm run check`、`npm run deploy`；其他分支运行检查与 `npm run deploy:preview`。CLI 自动读取 CI 分支名称，更新同一 Preview，并输出固定的分支地址与每次部署的地址。合并 main 后才更新生产内容；新主题不需要新增 Worker 或配置域名。自动发布的首次实际构建结果另记于 docs/deployment.md。
 
-当前已包含 GitHub Actions 检查；这不等于已经配置 Cloudflare 自动部署。后续连接应保证：制作分支构建包含草稿的预览，main 构建正式站点。每次新增讲义无需重新配置域名。
+预览正文带 noindex；public/_headers 也为预览自定义域名设置 X-Robots-Tag。预览地址公开，未配置登录限制。生产首页可以先发布，讲义保持草稿，等待用户审阅。
 
 ## 参考与灵感
 
@@ -202,4 +204,3 @@ npm run dev
 - [Idyll](https://idyll-lang.org/docs)：面向交互式文章的标记语言与组件设计。
 - [Astro](https://docs.astro.build/) 与 [MDX](https://mdxjs.com/docs/what-is-mdx/)：候选的网页构建工具与内容格式。
 
-原生版本预览与正式发布共用一个 Worker。预览更新通过上传版本更新别名；正式发布另行创建指向已审阅正式构建版本的 deployment。不要为每篇讲义或每个预览另建 Worker。

@@ -26,7 +26,9 @@ const tasks: Record<Kind,string> = {
     {kind!=='sine'&&<div class="width-group" aria-label="改变小框宽度"><button data-width=".5">收窄</button><span>δ = <strong data-delta>{s.delta}</strong></span><button data-width="2">加宽</button></div>}
     {kind==='sine'&&<span class="fixed-delta">δ = <strong data-delta>{s.delta}</strong></span>}
   </div>
-  <div class="explorer-footer"><span>ε = {s.eps} · 拖动中心移动小框</span><button data-reset>重置</button><button data-camera="fit" data-recenter hidden>找回小框</button><details class="explorer-options"><summary>视野与数值</summary><div><label>中心 x₀ <input data-center type="number" step="any" value={s.center} /></label><button data-camera="fit">查看中心附近</button><button data-camera="right">视野向右</button><p data-detail></p><p class="plot-legend"><span class="legend-curve">曲线</span><span class="legend-sides">绿边：宽度</span><span class="legend-limits">红边：高度限制</span></p></div></details></div>
+  <div class="explorer-footer"><span>ε = {s.eps} · <span data-range-note>观察范围内移动</span></span><button data-reset>重置</button></div>
+  <p class="experiment-scope">固定视野；图示只展示所选范围，完整定义域为 {s.domain}。</p>
+
 </div>
 <dialog class="explorer-dialog" aria-labelledby={`figure-${kind}`}></dialog>
 </continuity-box>

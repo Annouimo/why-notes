@@ -1,14 +1,17 @@
 import { analyzeBox } from './continuity.ts';
 export const examples = {
- sine:{formula:'y = sin x',domain:'ℝ',center:0,delta:.4,eps:.5,view:[-4,4,-1.8,1.8]},
- square:{formula:'y = x²',domain:'ℝ',center:1,delta:.1,eps:.5,view:[-.5,3.5,-1,10]},
- root:{formula:'y = √x',domain:'[0, ∞)',center:0,delta:.25,eps:.5,view:[-.4,3,-.7,2.3]},
- inverse:{formula:'y = 1/x',domain:'(0, ∞)',center:1,delta:.1,eps:.5,view:[-.1,2,-1,8]},
- oscillation:{formula:'y = sin(1/x)',domain:'(0, 1]',center:.6,delta:.04,eps:.5,view:[0,1,-1.7,1.7]},
- damped:{formula:'y = x sin(1/x)',domain:'[0, 1]',center:.6,delta:.01,eps:.5,view:[-.05,1.05,-1.5,1.5]},
- chirp:{formula:'y = sin(x²)',domain:'[0, ∞)',center:1,delta:.1,eps:.5,view:[0,8,-1.7,1.7]},
+ sine:{formula:'y = sin x',domain:'ℝ',center:0,delta:.4,eps:.5,view:[-3.8,3.8,-1.65,1.65],centers:[-3.3,3.3],widths:[.4,.4]},
+ square:{formula:'y = x²',domain:'ℝ',center:.8,delta:.2,eps:.5,view:[-.2,3.7,-.8,12],centers:[.3,3.2],widths:[.1,.4]},
+ root:{formula:'y = √x',domain:'[0, ∞)',center:0,delta:.25,eps:.5,view:[-.55,2.9,-.65,2.3],centers:[0,2.3],widths:[.125,.5]},
+ inverse:{formula:'y = 1/x',domain:'(0, ∞)',center:1,delta:.15,eps:.5,view:[0,2,-.7,7],centers:[.2,1.7],widths:[.075,.15]},
+ oscillation:{formula:'y = sin(1/x)',domain:'(0, 1]',center:.6,delta:.06,eps:.5,view:[0,1.15,-1.65,1.65],centers:[.12,1],widths:[.03,.12]},
+ damped:{formula:'y = x sin(1/x)',domain:'[0, 1]',center:.6,delta:.025,eps:.5,view:[-.12,1.12,-1.55,1.55],centers:[0,1],widths:[.025,.1]},
+ chirp:{formula:'y = sin(x²)',domain:'[0, ∞)',center:1,delta:.2,eps:.5,view:[0,5.4,-1.65,1.65],centers:[.4,4.9],widths:[.1,.4]},
 } as const;
 export type Kind = keyof typeof examples;
+// Display limits describe an experiment, not the function's mathematical domain.
+export function clampCenter(k:Kind,x:number){const [lo,hi]=examples[k].centers;return Number.isFinite(x)?Math.max(lo,Math.min(hi,x)):examples[k].center;}
+export function clampWidth(k:Kind,d:number){const [lo,hi]=examples[k].widths;return Number.isFinite(d)?Math.max(lo,Math.min(hi,d)):examples[k].delta;}
 export function value(k:Kind,x:number):number {
  switch(k){case 'sine':return Math.sin(x);case 'square':return x*x;case 'root':return Math.sqrt(x);case 'inverse':return 1/x;case 'oscillation':return Math.sin(1/x);case 'damped':return x===0?0:x*Math.sin(1/x);case 'chirp':return Math.sin(x*x);}
 }

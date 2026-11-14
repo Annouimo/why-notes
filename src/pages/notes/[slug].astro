@@ -23,9 +23,11 @@ const headings = note.getHeadings().filter(h => h.depth === 2);
 
 <script>
  const nav=document.querySelector('.lesson-toc')!;
+ const wide=window.matchMedia('(min-width:1320px)');
+ const details=nav.querySelector('details')!;const sync=()=>{details.open=wide.matches;};sync();wide.addEventListener('change',sync);
  const links=Array.from(nav.querySelectorAll<HTMLAnchorElement>('a'));
  const headings=links.map(a=>document.getElementById(decodeURIComponent(a.hash.slice(1)))!).filter(Boolean);
  const update=()=>{const current=headings.filter(h=>h.getBoundingClientRect().top<window.innerHeight*.35).at(-1)??headings[0];for(const a of links){if(a.hash==='#'+current?.id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');}const label=nav.querySelector('[data-current-section]')!;label.textContent=current?.textContent??'';};
  const observer=new IntersectionObserver(update,{rootMargin:'-10% 0px -60% 0px',threshold:0});headings.forEach(h=>observer.observe(h));update();
- links.forEach(a=>a.addEventListener('click',()=>{nav.querySelector('details')!.open=false;}));
+ links.forEach(a=>a.addEventListener('click',()=>{if(!wide.matches)details.open=false;}));
 </script>

@@ -45,6 +45,7 @@ class Box extends HTMLElement {
  add('circle',{cx:wx,cy:wy,r:5,class:'witness-point','clip-path':`url(#clip-${this.k})`});
  add('line',{x1:wx,x2:wx,y1:Y(y),y2:wy,class:'witness-guide','clip-path':`url(#clip-${this.k})`});
  }
+ this.querySelector<HTMLButtonElement>('[data-recenter]')!.hidden=!(X(this.a)<L||X(this.a)>R||Y(y)<T||Y(y)>B);
  this.querySelector('[data-detail]')!.textContent=(X(this.a)<L||X(this.a)>R||Y(y)<T||Y(y)>B?'中心已离开视野。请主动点击“查看中心附近”。':'收窄只改变绿边，坐标与曲线保持不动。')+(this.k==='oscillation'||this.k==='damped'?' 极密振荡无法逐条显示；数学判断不依赖曲线采样。':'');
  this.querySelector('[data-delta]')!.textContent=fmt(this.d);this.querySelector('[data-view-scale]')!.textContent='x₀ = '+fmt(this.a);const input=this.querySelector<HTMLInputElement>('[data-center]')!;if(document.activeElement!==input)input.value=fmt(this.a);
  }
